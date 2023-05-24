@@ -17,6 +17,7 @@ pipeline {
                 jacoco execPattern: 'target/jacoco.exec'
               }
              }
+             }
       stage ('Docker build and push') {
         steps {
           withDockerRegistery([credentialsId: "docker-hub", url: ""]) {
