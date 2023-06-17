@@ -16,8 +16,14 @@ pipeline {
           always {
             junit 'target/surefire-reports/*.xml'
             jacoco execPattern: 'target/jacoco.exec'
-            //jacoco execPattern: 'target/jacoco.exec'
           }
+        }
+      }
+      stage('Docker build and push') {
+        steps {
+          sh '$printenv'
+          sh 'docker build -t bjreddy246/numeric-app:""$GIT_COMMIT"" .'
+          sh 'docker push bjreddy246/numeric-app:""$GIT_COMMIT""'
         }
       }
     }
