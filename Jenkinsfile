@@ -34,7 +34,7 @@ pipeline {
           withSonarQubeEnv('SonarQube') {
             sh "mvn sonar:sonar -Dsonar.projectKey=numeric-application -Dsonar.host.url=http://146.148.63.7:9000"
           }
-          timeout(time: 2, unit: 'MINUTES') {
+          timeout(time: 3, unit: 'MINUTES') {
             script {
                 waitForQualityGate abortPipeline: true
             }
