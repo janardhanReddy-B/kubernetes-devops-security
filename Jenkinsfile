@@ -1,6 +1,16 @@
 pipeline {
   agent any
 
+  environment {
+      deploymentName = "devsecops"
+      containerName = "devsecops-container"
+      serviceName = "devsecops-svc"
+      imageName = "bjreddy2468/numeric-app:${GIT_COMMIT}"
+      applicationURL = "146.148.63.7/"
+      applicationURI = "/increment/99"
+  }
+
+
     stages {
       stage('Maven build') {
         steps {
@@ -65,15 +75,31 @@ pipeline {
             }
           }
 
-      stage('Kubernetes deployment -Dev') {
-        steps {
-          withKubeConfig([credentialsId: 'kubeconfig']) {
-          sh "sed -i 's#replace#bjreddy2468/numeric-app:${GIT_COMMIT}#g' k8s_deployment_service.yaml"
-          sh "kubectl apply -f k8s_deployment_service.yaml"
+#     stage('Kubernetes deployment -Dev') {
+#       steps {
+#         withKubeConfig([credentialsId: 'kubeconfig']) {
+#         sh "sed -i 's#replace#bjreddy2468/numeric-app:${GIT_COMMIT}#g' k8s_deployment_service.yaml"
+#         sh "kubectl apply -f k8s_deployment_service.yaml"
+#         }
+#       }
+#      }
+      stage('K8S Deployment - DEV') {
+            steps {
+              parallel(
+                "Deployment": {
+                  withKubeConfig([credentialsId: 'kubeconfig']) {
+                    sh "bash k8s-deployment.sh"
+                  }
+                },
+                "Rollout Status": {
+                  withKubeConfig([credentialsId: 'kubeconfig']) {
+                    sh "bash k8s-deployment-rollout-status.sh"
+                  }
+                }
+              )
+            }
           }
-        }
       }
-    }
     post {
         always {
             junit 'target/surefire-reports/*.xml'
