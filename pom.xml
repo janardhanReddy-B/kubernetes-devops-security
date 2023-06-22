@@ -22,6 +22,7 @@
 		<tomcat.version>9.0.43</tomcat.version>
 		<spring-framework.version>5.2.20.RELEASE</spring-framework.version>
 		<snakeyaml.version>1.32</snakeyaml.version>
+		<spring-security.version>5.4.4</spring-security.version>
 	</properties>
 
 	<dependencies>
